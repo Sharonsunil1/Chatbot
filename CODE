@@ -1,0 +1,58 @@
+import random
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+
+# Define patterns and responses
+patterns_responses = [
+    (r"(hi|hello|hey)", ["Hello!", "Hey there!", "Hi! How can I assist you today?"]),
+    (r"how are you\??", ["I'm doing well, thank you!", "I'm great, thanks for asking!", "I'm fine, how about you?"]),
+    (r"what's your name\??", ["I'm just a chatbot.", "I'm a chatbot, you can call me ChatGPT."]),
+    (r"(good|fine|well|great)", ["That's good to hear!", "I'm glad to hear that.", "Awesome!"]),
+    (r"(help|assist)", ["Sure, I'd be happy to help. What do you need assistance with?"]),
+    (r"(where is|located) (.*)\??", ["You can find {location} in that area.", "It's located {location}."]),
+    (r"(what is|tell me about) (.*)\??", ["{topic} is.", "It's {topic}."]),
+    (r"(favorite|favourite) (.*)\??", ["I don't have preferences, but I can help you with {subject}.", "I'm just a machine, I don't have favorites."]),
+    (r"(movie|film) (recommendation|recommend)\??", ["How about watching {title}? It's a great choice!", "I recommend {title}. It's a must-watch!"]),
+    (r"(quit|exit)", ["Bye, take care!", "Goodbye!", "See you later!"]),
+    # New patterns and responses
+    (r"(.*) (hungry|food|eat) ?", ["I'm just a chatbot, I don't eat.", "Food sounds delicious!"]),
+    (r"(.) (thank you|thanks) (.)", ["You're welcome!", "Anytime!", "No problem."]),
+    (r"(.*) (weather|forecast) ?", ["I'm not equipped to provide weather forecasts."]),
+    (r"(.*) (joke|funny) ?", ["Why don't scientists trust atoms? Because they make up everything!", "What do you get when you cross a snowman and a vampire? Frostbite!"]),
+    (r"(.) (love|like) (.)", ["That's great to hear!", "Love is a wonderful thing."]),
+]
+
+# Function to generate a response
+def generate_response(user_input):
+    for pattern, responses in patterns_responses:
+        match = re.match(pattern, user_input)
+        if match:
+            response = random.choice(responses)
+            if '{' in response:
+                response = response.format(*match.groups())
+            return response
+    return "I'm sorry, I didn't understand that."
+
+# Define a function to preprocess user input using NLTK
+def preprocess_input(user_input):
+    tokens = word_tokenize(user_input)
+    tagged_tokens = pos_tag(tokens)
+    return tagged_tokens
+
+# Define a function to interact with the user
+def chat():
+    print("Welcome! I'm ChatGPT, your friendly chatbot.")
+    print("You can ask me questions or just say hello!")
+    print("Type 'quit' to exit the chat.")
+    
+    while True:
+        user_input = input("You: ").lower()
+        response = generate_response(user_input)
+        print("ChatGPT:", response)
+        if user_input in ["quit", "exit"]:
+            break
+
+# Start the conversation
+chat()
